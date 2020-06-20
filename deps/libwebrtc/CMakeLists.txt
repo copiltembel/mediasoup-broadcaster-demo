@@ -10,9 +10,15 @@ set(SOURCE_FILES
 	test/testsupport/ivf_video_frame_generator.cc
 	test/testsupport/file_utils.cc
 	test/testsupport/file_utils_override.cc
+	)
+	
+# Extra libs
+if(APPLE)
+list(APPEND SOURCE_FILES
 	test/testsupport/ios_file_utils.mm
 	test/testsupport/mac_file_utils.mm
 )
+endif(APPLE)
 
 # Create target.
 add_library(webrtc_broadcaster STATIC ${SOURCE_FILES})
