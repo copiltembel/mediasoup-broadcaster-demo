@@ -14,9 +14,6 @@ void signalHandler(int signum)
 {
 	std::cout << "[INFO] interrupt signal (" << signum << ") received" << std::endl;
 
-	// Remove broadcaster from the server.
-	broadcaster.Stop();
-
 	std::cout << "[INFO] leaving!" << std::endl;
 
 	std::exit(signum);
@@ -33,7 +30,7 @@ int main(int argc, char* argv[])
 	const char* envEnableAudio  = std::getenv("ENABLE_AUDIO");
 	const char* envUseSimulcast = std::getenv("USE_SIMULCAST");
 	const char* envWebrtcDebug  = std::getenv("WEBRTC_DEBUG");
-	const char* envVerifySsl 		= std::getenv("VERIFY_SSL");
+	const char* envVerifySsl 	= std::getenv("VERIFY_SSL");
 
 	if (envServerUrl == nullptr)
 	{
@@ -100,12 +97,13 @@ int main(int argc, char* argv[])
 
 	auto response = nlohmann::json::parse(r.text);
 
+	Broadcaster broadcaster;
+
 	broadcaster.Start(baseUrl, enableAudio, useSimulcast, response, verifySsl);
 
 	std::cout << "[INFO] press Ctrl+C or Cmd+C to leave..."<< std::endl;
 
-	// (void)sigsuspend(nullptr);
-	auto c = getchar();
+	std::this_thread::sleep_for(std::chrono::hours(10));
 
 	return 0;
 }
