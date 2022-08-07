@@ -2,18 +2,17 @@
 
 #include <iostream>
 
-#include "MediaStreamTrackFactory.hpp"
 #include "MediaSoupClientErrors.hpp"
+#include "MediaStreamTrackFactory.hpp"
+#include "pc/test/fake_audio_capture_module.h"
+#include "pc/test/fake_periodic_video_track_source.h"
+#include "pc/test/frame_generator_capturer_video_track_source.h"
+#include "system_wrappers/include/clock.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
-#include "pc/test/fake_audio_capture_module.h"
-#include "pc/test/fake_periodic_video_track_source.h"
-#include "pc/test/frame_generator_capturer_video_track_source.h"
-#include "system_wrappers/include/clock.h"
-
 
 using namespace mediasoupclient;
 
@@ -82,31 +81,27 @@ rtc::scoped_refptr<webrtc::AudioTrackInterface> createAudioTrack(const std::stri
 }
 
 // Video track creation.
-rtc::scoped_refptr<webrtc::VideoTrackInterface> createVideoTrack(const std::string& label)
+rtc::scoped_refptr<webrtc::VideoTrackInterface> createVideoTrack(const std::string& /*label*/)
 {
 	if (!factory)
 		createFactory();
 
-	auto video_track_source = new rtc::RefCountedObject<webrtc::FakePeriodicVideoTrackSource>(
-			false /* remote */);
+	auto* videoTrackSource =
+	  new rtc::RefCountedObject<webrtc::FakePeriodicVideoTrackSource>(false /* remote */);
 
-	return factory->CreateVideoTrack(
-			rtc::CreateRandomUuid(), video_track_source);
+	return factory->CreateVideoTrack(rtc::CreateRandomUuid(), videoTrackSource);
 }
 
-rtc::scoped_refptr<webrtc::VideoTrackInterface> createSquaresVideoTrack(const std::string& label)
+rtc::scoped_refptr<webrtc::VideoTrackInterface> createSquaresVideoTrack(const std::string& /*label*/)
 {
 	if (!factory)
 		createFactory();
 
 	std::cout << "[INFO] getting frame generator" << std::endl;
-	auto video_track_source_ = new rtc::RefCountedObject<webrtc::FrameGeneratorCapturerVideoTrackSource>(
-		webrtc::FrameGeneratorCapturerVideoTrackSource::Config(), 
-		webrtc::Clock::GetRealTimeClock(),
-		false);
-	video_track_source_->Start();
+	auto* videoTrackSource = new rtc::RefCountedObject<webrtc::FrameGeneratorCapturerVideoTrackSource>(
+	  webrtc::FrameGeneratorCapturerVideoTrackSource::Config(), webrtc::Clock::GetRealTimeClock(), false);
+	videoTrackSource->Start();
 
 	std::cout << "[INFO] creating video track" << std::endl;
-	return factory->CreateVideoTrack(
-			rtc::CreateRandomUuid(), video_track_source_);
+	return factory->CreateVideoTrack(rtc::CreateRandomUuid(), videoTrackSource);
 }

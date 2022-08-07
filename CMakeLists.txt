@@ -10,6 +10,13 @@ set(broadcaster_VERSION_MINOR 1)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+message("\n=========== mediasoup-broadcaster-demo Build Configuration ===========\n")
+message(STATUS "LIBWEBRTC_INCLUDE_PATH : " ${LIBWEBRTC_INCLUDE_PATH})
+message(STATUS "LIBWEBRTC_BINARY_PATH  : " ${LIBWEBRTC_BINARY_PATH})
+message(STATUS "OPENSSL_INCLUDE_DIR    : " ${OPENSSL_INCLUDE_DIR})
+message(STATUS "CMAKE_USE_OPENSSL      : " ${CMAKE_USE_OPENSSL})
+message("")
+
 # Add some compile flags to our source files.
 set_source_files_properties(${SOURCE_FILES}
 	PROPERTIES COMPILE_FLAGS -Wall -Wextra -Wpedantic)
@@ -40,6 +47,24 @@ if(APPLE)
 	)
 endif(APPLE)
 
+include(FetchContent)
+
+message(STATUS "\nFetching mediasoupclient...\n")
+FetchContent_Declare(
+  mediasoupclient
+  GIT_REPOSITORY https://github.com/versatica/libmediasoupclient.git
+  GIT_TAG v3
+)
+FetchContent_MakeAvailable(mediasoupclient)
+
+message(STATUS "Fetching cpr...\n")
+FetchContent_Declare(
+	cpr
+	GIT_REPOSITORY https://github.com/whoshuu/cpr
+	GIT_TAG 1.4.0
+)
+FetchContent_MakeAvailable(cpr)
+
 target_sources(${PROJECT_NAME} PRIVATE
 	src/Broadcaster.cpp
 	src/main.cpp
@@ -50,20 +75,19 @@ target_sources(${PROJECT_NAME} PRIVATE
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
 # Source Dependencies.
-add_subdirectory(deps/cpr "${CMAKE_CURRENT_BINARY_DIR}/cpr")
-add_subdirectory(deps/libmediasoupclient "${CMAKE_CURRENT_BINARY_DIR}/libmediasoupclient")
 add_subdirectory(deps/libwebrtc "${CMAKE_CURRENT_BINARY_DIR}/libwebrtc")
 
 # Public (interface) headers from dependencies.
 target_include_directories(${PROJECT_NAME} PUBLIC
-	${CPR_INCLUDE_DIRS}
-	"${PROJECT_SOURCE_DIR}/deps/libmediasoupclient/include"
+	${mediasoupclient_SOURCE_DIR}/include
+	${cpr_SOURCE_DIR}/include
 	"${PROJECT_SOURCE_DIR}/deps/libwebrtc"
 )
 
 # Public (interface) dependencies.
 target_link_libraries(${PROJECT_NAME} PUBLIC
-	${CPR_LIBRARIES}
+	${LIBWEBRTC_BINARY_PATH}/libwebrtc${CMAKE_STATIC_LIBRARY_SUFFIX}
+	cpr
 	mediasoupclient
 	webrtc_broadcaster
 )
