@@ -94,5 +94,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 	cpr
 	mediasoupclient
 	webrtc_broadcaster
+	X11
 )
 
