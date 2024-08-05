@@ -53,7 +53,7 @@ message(STATUS "\nFetching mediasoupclient...\n")
 FetchContent_Declare(
   mediasoupclient
   GIT_REPOSITORY https://github.com/versatica/libmediasoupclient.git
-  GIT_TAG m120
+  GIT_TAG v3
 )
 FetchContent_MakeAvailable(mediasoupclient)
 
