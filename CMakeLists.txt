@@ -7,7 +7,7 @@ set(broadcaster_VERSION_MAJOR 0)
 set(broadcaster_VERSION_MINOR 1)
 
 # C++ standard requirements.
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message("\n=========== mediasoup-broadcaster-demo Build Configuration ===========\n")
@@ -61,7 +61,7 @@ message(STATUS "Fetching cpr...\n")
 FetchContent_Declare(
 	cpr
 	GIT_REPOSITORY https://github.com/whoshuu/cpr
-	GIT_TAG 1.4.0
+	GIT_TAG 1.10.5
 )
 FetchContent_MakeAvailable(cpr)
 
@@ -87,8 +87,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 # Public (interface) dependencies.
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	${LIBWEBRTC_BINARY_PATH}/libwebrtc${CMAKE_STATIC_LIBRARY_SUFFIX}
+	${LIBWEBRTC_BINARY_PATH}/api/video_codecs/libbuiltin_video_encoder_factory${CMAKE_STATIC_LIBRARY_SUFFIX}
+	${LIBWEBRTC_BINARY_PATH}/api/video_codecs/libbuiltin_video_decoder_factory${CMAKE_STATIC_LIBRARY_SUFFIX}
+	${LIBWEBRTC_BINARY_PATH}/media/librtc_simulcast_encoder_adapter${CMAKE_STATIC_LIBRARY_SUFFIX}
+	${LIBWEBRTC_BINARY_PATH}/media/librtc_internal_video_codecs${CMAKE_STATIC_LIBRARY_SUFFIX}
 	cpr
 	mediasoupclient
 	webrtc_broadcaster
+	X11
 )
 
