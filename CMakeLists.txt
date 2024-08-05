@@ -7,7 +7,7 @@ set(broadcaster_VERSION_MAJOR 0)
 set(broadcaster_VERSION_MINOR 1)
 
 # C++ standard requirements.
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message("\n=========== mediasoup-broadcaster-demo Build Configuration ===========\n")
@@ -52,8 +52,8 @@ include(FetchContent)
 message(STATUS "\nFetching mediasoupclient...\n")
 FetchContent_Declare(
   mediasoupclient
-  GIT_REPOSITORY https://github.com/versatica/libmediasoupclient.git
-  GIT_TAG v3
+  GIT_REPOSITORY https://github.com/copiltembel/libmediasoupclient.git
+  GIT_TAG v3_cxx17 
 )
 FetchContent_MakeAvailable(mediasoupclient)
 

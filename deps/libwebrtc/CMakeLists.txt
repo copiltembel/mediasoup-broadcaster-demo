@@ -1,3 +1,7 @@
+# C++ standard requirements.
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(SOURCE_FILES
 	api/test/create_frame_generator.cc
 	media/base/fake_frame_source.cc
